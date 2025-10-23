@@ -1,0 +1,75 @@
+version: '3.8'
+
+services:
+  # 1. Service Backend (Spring Boot)
+  backend:
+    build: ./backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/springboot
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=monmotdepasse
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+
+  # 2. Service Frontend (React + Nginx)
+  frontend:
+    build: ./frontend
+    ports:
+      - "80:80" # Votre app sera accessible sur http://localhost
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # 3. Service Base de Données (PostgreSQL)
+  postgres:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=monmotdepasse
+      - POSTGRES_DB=springboot
+    volumes:
+      - db-data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  # 4. Service Monitoring (Prometheus)
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus/:/etc/prometheus/
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
+  # 5. Service Dashboarding (Grafana)
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+    volumes:
+      - grafana-data:/var/lib/grafana
+    depends_on:
+      - prometheus
+    networks:
+      - app-network
+
+volumes:
+  db-data:
+  grafana-data:
+
+networks:
+  app-network:
+    driver: bridge

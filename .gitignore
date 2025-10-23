@@ -1,0 +1,39 @@
+# Fichiers et dossiers généraux
+.DS_Store
+*.log
+*.tmp
+*.swp
+
+# Fichiers IDE
+.idea/
+*.iml
+.vscode/
+*.suo
+*.user
+nbproject/
+*.sln
+
+# Dossiers de Build Java/Maven
+backend/target/
+backend/.mvn/
+
+# Dossiers de Build Node/React
+frontend/node_modules/
+frontend/build/
+frontend/.pnp.*
+
+# Fichiers de dépendances Node
+frontend/package-lock.json
+frontend/yarn.lock
+frontend/pnpm-lock.yaml
+
+# Fichiers Docker (si générés dynamiquement, mais généralement on les garde)
+# docker-compose.override.yml
+
+# Fichiers de configuration locaux (si vous en avez)
+# .env
+
+# Données persistantes Docker (NE JAMAIS COMMITTER LES VOLUMES !)
+# (Ces dossiers ne sont généralement pas dans le projet, mais au cas où)
+db-data/
+grafana-data/
